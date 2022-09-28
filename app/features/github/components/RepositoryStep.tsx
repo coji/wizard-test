@@ -1,23 +1,11 @@
-import { useState, useEffect } from "react"
 import { Stack, Box, Spacer, Button } from "@chakra-ui/react"
 import { useWizard } from "react-use-wizard"
-import { listGithubRepos } from "../services/listGithubRepos"
+import { useGithubRepoQuery } from "../hooks/useGithubReposQuery"
 import type { StepProps } from "../interfaces/step-props"
 
 export const RepositoryStep = ({ onStepNext, config }: StepProps) => {
   const { previousStep, nextStep } = useWizard()
-  const [data, setData] = useState<Awaited<ReturnType<typeof listGithubRepos>>>(
-    []
-  )
-
-  useEffect(() => {
-    const fetchRepos = async () => {
-      const list = await listGithubRepos(config.token)
-      setData(list)
-    }
-    if (config.token) fetchRepos()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  const { data, isLoading } = useGithubRepoQuery(config.token)
 
   return (
     <>
@@ -31,9 +19,10 @@ export const RepositoryStep = ({ onStepNext, config }: StepProps) => {
           <Button
             colorScheme="blue"
             onClick={() => {
-              onStepNext({ repositories: data[0] })
+              onStepNext({ repositories: data && data[0] })
               nextStep()
             }}
+            isLoading={isLoading}
           >
             Next
           </Button>

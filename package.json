@@ -8,17 +8,19 @@
   "dependencies": {
     "@chakra-ui/react": "^2.3.4",
     "@emotion/cache": "^11.10.3",
-    "@emotion/react": "^11",
-    "@emotion/server": "^11",
-    "@emotion/styled": "^11",
+    "@emotion/react": "^11.10.4",
+    "@emotion/server": "^11.10.0",
+    "@emotion/styled": "^11.10.4",
     "@octokit/plugin-paginate-rest": "^4.3.1",
     "@remix-run/node": "^1.7.2",
     "@remix-run/react": "^1.7.2",
     "@remix-run/vercel": "^1.7.2",
     "@remix-validated-form/with-zod": "^2.0.2",
-    "@vercel/node": "^2.4.4",
+    "@tanstack/react-query": "^4.7.1",
+    "@tanstack/react-query-devtools": "^4.7.1",
+    "@vercel/node": "^2.5.20",
     "dotenv": "^16.0.2",
-    "framer-motion": "^6",
+    "framer-motion": "^7.4.0",
     "octokit": "^2.0.7",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -31,10 +33,10 @@
     "@remix-run/dev": "^1.7.2",
     "@remix-run/eslint-config": "^1.7.2",
     "@remix-run/serve": "^1.7.2",
-    "@types/react": "^18.0.15",
+    "@types/react": "^18.0.21",
     "@types/react-dom": "^18.0.6",
-    "eslint": "^8.23.1",
-    "typescript": "^4.7.4"
+    "eslint": "^8.24.0",
+    "typescript": "^4.8.4"
   },
   "engines": {
     "node": ">=14"

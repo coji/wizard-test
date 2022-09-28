@@ -16,6 +16,8 @@ import { useLoaderData } from "@remix-run/react"
 import { ServerStyleContext, ClientStyleContext } from "./context"
 import type { LoaderArgs } from "@remix-run/node"
 import { json } from "@remix-run/node"
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools"
 
 declare global {
   var env: {
@@ -98,12 +100,17 @@ const Document = withEmotionCache(
   }
 )
 
+const queryClient = new QueryClient()
+
 export default function App() {
   return (
     <Document>
-      <ChakraProvider>
-        <Outlet />
-      </ChakraProvider>
+      <QueryClientProvider client={queryClient}>
+        <ChakraProvider>
+          <Outlet />
+        </ChakraProvider>
+        <ReactQueryDevtools initialIsOpen={false} />
+      </QueryClientProvider>
     </Document>
   )
 }
