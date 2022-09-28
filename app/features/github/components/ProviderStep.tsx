@@ -23,6 +23,7 @@ export const ProviderStep = ({ onStepNext }: StepProps) => {
         onSubmit={async (formData, e) => {
           onStepNext(formData)
           nextStep()
+          e.preventDefault()
         }}
       >
         <Stack>
