@@ -18,8 +18,8 @@ export const listGithubRepos = async (token: string) => {
         visibility: repo.visibility,
         owner: repo.owner.login,
         name: repo.name,
-        updatedAt: repo.updated_at,
         createdAt: repo.created_at,
+        pushedAt: repo.pushed_at,
       }))
   )
 
