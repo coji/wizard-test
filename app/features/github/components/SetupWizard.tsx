@@ -8,10 +8,10 @@ import {
 } from "~/features/github/components"
 
 export const SetupWizard = () => {
-  const [result, setResult] = useState({})
+  const [config, setConfig] = useState({})
 
   const handleStepNext = (params: object) => {
-    setResult((val) => ({ ...val, ...params }))
+    setConfig((val) => ({ ...val, ...params }))
   }
 
   return (
@@ -19,12 +19,12 @@ export const SetupWizard = () => {
       <Heading>Wizard Test</Heading>
 
       <Wizard startIndex={0}>
-        <ProviderStep onStepNext={handleStepNext} />
-        <RepositoryStep onStepNext={handleStepNext} />
-        <ConfirmStep onStepNext={handleStepNext} />
+        <ProviderStep config={config} onStepNext={handleStepNext} />
+        <RepositoryStep config={config} onStepNext={handleStepNext} />
+        <ConfirmStep config={config} onStepNext={handleStepNext} />
       </Wizard>
 
-      <Box>{JSON.stringify(result)}</Box>
+      <Box>{JSON.stringify(config)}</Box>
     </Stack>
   )
 }

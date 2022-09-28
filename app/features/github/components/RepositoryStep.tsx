@@ -4,7 +4,7 @@ import { useWizard } from "react-use-wizard"
 import { listGithubRepos } from "../services/listGithubRepos"
 import type { StepProps } from "../interfaces/step-props"
 
-export const RepositoryStep = ({ onStepNext }: StepProps) => {
+export const RepositoryStep = ({ onStepNext, config }: StepProps) => {
   const { previousStep, nextStep } = useWizard()
   const [data, setData] = useState<Awaited<ReturnType<typeof listGithubRepos>>>(
     []
@@ -12,10 +12,10 @@ export const RepositoryStep = ({ onStepNext }: StepProps) => {
 
   useEffect(() => {
     const fetchRepos = async () => {
-      const list = await listGithubRepos(window.env.GITHUB_AUTH_TOKEN)
+      const list = await listGithubRepos(config.token)
       setData(list)
     }
-    fetchRepos()
+    if (config.token) fetchRepos()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
