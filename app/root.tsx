@@ -11,7 +11,7 @@ import {
   ScrollRestoration,
 } from "@remix-run/react"
 import type { MetaFunction, LinksFunction } from "@remix-run/node" // Depends on the runtime you choose
-import { useLoaderData } from "@remix-run/React"
+import { useLoaderData } from "@remix-run/react"
 
 import { ServerStyleContext, ClientStyleContext } from "./context"
 import type { LoaderArgs } from "@remix-run/node"
