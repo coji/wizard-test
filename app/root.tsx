@@ -11,8 +11,21 @@ import {
   ScrollRestoration,
 } from "@remix-run/react"
 import type { MetaFunction, LinksFunction } from "@remix-run/node" // Depends on the runtime you choose
+import { useLoaderData } from "@remix-run/React"
 
 import { ServerStyleContext, ClientStyleContext } from "./context"
+import type { LoaderArgs } from "@remix-run/node"
+import { json } from "@remix-run/node"
+
+declare global {
+  var env: {
+    GITHUB_AUTH_TOKEN: string
+  }
+}
+
+export const loader = (args: LoaderArgs) => {
+  return json({ GITHUB_AUTH_TOKEN: process.env.GITHUB_AUTH_TOKEN })
+}
 
 export const meta: MetaFunction = () => ({
   charset: "utf-8",
@@ -37,6 +50,7 @@ interface DocumentProps {
 
 const Document = withEmotionCache(
   ({ children }: DocumentProps, emotionCache) => {
+    const data = useLoaderData<typeof loader>()
     const serverStyleData = useContext(ServerStyleContext)
     const clientStyleData = useContext(ClientStyleContext)
 
@@ -70,6 +84,11 @@ const Document = withEmotionCache(
         </head>
         <body>
           {children}
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `window.env = ${JSON.stringify(data)}`,
+            }}
+          ></script>
           <ScrollRestoration />
           <Scripts />
           <LiveReload />

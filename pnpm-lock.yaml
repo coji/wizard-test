@@ -6,6 +6,7 @@ specifiers:
   '@emotion/react': ^11
   '@emotion/server': ^11
   '@emotion/styled': ^11
+  '@octokit/plugin-paginate-rest': ^4.3.1
   '@remix-run/dev': ^1.7.2
   '@remix-run/eslint-config': ^1.7.2
   '@remix-run/node': ^1.7.2
@@ -34,6 +35,7 @@ dependencies:
   '@emotion/react': 11.10.4_iapumuv4e6jcjznwuxpf4tt22e
   '@emotion/server': 11.10.0
   '@emotion/styled': 11.10.4_g3tud4ene45llglqap74b5kkse
+  '@octokit/plugin-paginate-rest': 4.3.1
   '@remix-run/node': 1.7.2_biqbaboplfbrettd7655fr4n2y
   '@remix-run/react': 1.7.2_biqbaboplfbrettd7655fr4n2y
   '@remix-run/vercel': 1.7.2_kvynx7e3ahiuqujwot5h665b4a
@@ -2934,6 +2936,15 @@ packages:
 
   /@octokit/openapi-types/13.12.0:
     resolution: {integrity: sha512-1QYzZrwnn3rTQE7ZoSxXrO8lhu0aIbac1c+qIPOPEaVXBWSaUyLV1x9yt4uDQOwmu6u5ywVS8OJgs+ErDLf6vQ==}
+    dev: false
+
+  /@octokit/plugin-paginate-rest/4.3.1:
+    resolution: {integrity: sha512-h8KKxESmSFTcXX409CAxlaOYscEDvN2KGQRsLCGT1NSqRW+D6EXLVQ8vuHhFznS9MuH9QYw1GfsUN30bg8hjVA==}
+    engines: {node: '>= 14'}
+    peerDependencies:
+      '@octokit/core': '>=4'
+    dependencies:
+      '@octokit/types': 7.5.0
     dev: false
 
   /@octokit/plugin-paginate-rest/4.3.1_@octokit+core@4.0.5:
