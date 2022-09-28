@@ -12,6 +12,7 @@ export const listGithubRepos = async (token: string) => {
     },
     (res) =>
       res.data.map((repo) => ({
+        id: repo.node_id,
         full_name: repo.full_name,
         defaultBranch: repo.default_branch,
         visibility: repo.visibility,
