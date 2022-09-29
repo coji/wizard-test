@@ -78,6 +78,7 @@ const Document = withEmotionCache(
           <Links />
           {serverStyleData?.map(({ key, ids, css }) => (
             <style
+              suppressHydrationWarning
               key={key}
               data-emotion={`${key} ${ids.join(" ")}`}
               dangerouslySetInnerHTML={{ __html: css }}
