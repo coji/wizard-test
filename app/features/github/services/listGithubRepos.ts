@@ -7,9 +7,6 @@ export const listGithubRepos = async (token: string) => {
 
   const repos = await octokit.paginate(
     octokit.rest.repos.listForAuthenticatedUser,
-    {
-      page_size: 100,
-    },
     (res) =>
       res.data.map((repo) => ({
         id: repo.node_id,

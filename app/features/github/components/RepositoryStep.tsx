@@ -18,6 +18,7 @@ import {
   Checkbox,
   Badge,
 } from "@chakra-ui/react"
+import React, { useState, useCallback, useEffect } from "react"
 import { useWizard } from "react-use-wizard"
 import { useGithubRepoQuery } from "../hooks/useGithubReposQuery"
 import type { StepProps } from "../interfaces/step-props"
@@ -27,60 +28,138 @@ import dayjs from "dayjs"
 export const RepositoryStep = ({ onStepNext, config }: StepProps) => {
   const { previousStep, nextStep } = useWizard()
   const { data, isLoading } = useGithubRepoQuery(config.token)
-
+  const [checkedRepos, setCheckedRepos] = useState<{ [id: string]: boolean }>(
+    {}
+  )
   const orgs = uniq(data?.map((repo) => repo.owner) ?? [])
+  const selectedRepos =
+    data?.filter((repo) => Object.keys(checkedRepos).includes(repo.id)) || []
+
+  const handleClickOrgCheckbox = useCallback(
+    (org: string, isPrevChecked: boolean) => {
+      if (!data) return
+      const orgRepos = data.filter((repo) => repo.owner === org) || []
+      const newCheckedRepos = { ...checkedRepos }
+      for (const repo of orgRepos) {
+        if (isPrevChecked) {
+          delete newCheckedRepos[repo.id]
+        } else {
+          newCheckedRepos[repo.id] = true
+        }
+      }
+      setCheckedRepos(newCheckedRepos)
+    },
+    [data, checkedRepos]
+  )
+
+  const handleClickRepoCheckbox = useCallback(
+    (id: string) => {
+      const newCheckedRepos = { ...checkedRepos }
+      if (checkedRepos[id]) {
+        delete newCheckedRepos[id]
+      } else {
+        newCheckedRepos[id] = true
+      }
+      setCheckedRepos(newCheckedRepos)
+    },
+    [checkedRepos]
+  )
+
+  useEffect(() => {
+    if (data && config.repositories) {
+      const prevCheckedRepos: { [id: string]: boolean } = {}
+      for (const repo of config.repositories) {
+        prevCheckedRepos[repo.id] = true
+      }
+      setCheckedRepos(prevCheckedRepos)
+    }
+  }, [data, config.repositories])
 
   return (
     <>
       <Stack>
-        <Accordion allowMultiple>
+        <Accordion allowToggle>
           {!!orgs &&
             orgs.map((org) => {
-              const repos = data?.filter((repo) => repo.owner == org)
+              const repos = data?.filter((repo) => repo.owner == org) || []
+              const checkedRepoNum = repos.filter(
+                (repo) => !!checkedRepos[repo.id]
+              ).length
+              const isOrgChecked = checkedRepoNum > 0
+              const isOrgIndeterminate =
+                checkedRepoNum > 0 && checkedRepoNum != repos.length
+
               return (
-                <>
-                  <AccordionItem key={org}>
+                <React.Fragment key={org}>
+                  <AccordionItem>
                     <Box>
-                      <AccordionButton>
-                        <Box flex="1" textAlign="left">
-                          {org} {repos?.length}
-                        </Box>
+                      <AccordionButton display="flex">
+                        <Stack direction="row" align="center">
+                          <Checkbox
+                            isChecked={isOrgChecked}
+                            isIndeterminate={isOrgIndeterminate}
+                            onChange={(e) => {
+                              handleClickOrgCheckbox(org, isOrgChecked)
+                            }}
+                          ></Checkbox>
+                          <Box>{org}</Box>
+                          <Box fontSize="sm" color="gray.500">
+                            {checkedRepoNum} / {repos.length} repos
+                          </Box>
+                        </Stack>
+
+                        <Spacer />
                         <AccordionIcon />
                       </AccordionButton>
                     </Box>
 
                     <AccordionPanel>
                       <TableContainer>
-                        <Table>
+                        <Table size="sm">
                           <Thead>
                             <Tr>
-                              <Th minWidth="16rem">Repository</Th>
-                              <Th minWidth="16rem">Path</Th>
-                              <Th minWidth="10rem">Active Repos</Th>
-                              <Th minWidth="10rem">Created</Th>
+                              <Th width="16rem">Repository</Th>
+                              <Th width="16rem">Path</Th>
+                              <Th width="10rem" textAlign="center">
+                                Last Pushed
+                              </Th>
+                              <Th width="10rem" textAlign="center">
+                                Created
+                              </Th>
                             </Tr>
                           </Thead>
                           <Tbody>
-                            {repos?.map((repo) => {
+                            {repos.map((repo) => {
                               const isActive =
                                 dayjs(repo.pushedAt) > dayjs().add(-90, "days")
+
                               return (
                                 <Tr
                                   key={repo.id}
-                                  _hover={{ bgColor: "gray.50" }}
+                                  _hover={{
+                                    bgColor: "gray.50",
+                                    cursor: "pointer",
+                                  }}
+                                  onClick={(e) => {
+                                    handleClickRepoCheckbox(repo.id)
+                                    e.preventDefault()
+                                  }}
                                 >
                                   <Td
-                                    minWidth="16rem"
+                                    width="16rem"
                                     wordBreak="break-all"
                                     whiteSpace="break-spaces"
                                   >
                                     <Stack direction="row">
-                                      <Checkbox></Checkbox>
+                                      <Checkbox
+                                        isChecked={checkedRepos[repo.id]}
+                                      ></Checkbox>
                                       <Box>{repo.name}</Box>
                                     </Stack>
                                   </Td>
+
                                   <Td
-                                    minWidth="16rem"
+                                    width="16rem"
                                     wordBreak="break-all"
                                     whiteSpace="break-spaces"
                                     fontSize="xs"
@@ -88,26 +167,43 @@ export const RepositoryStep = ({ onStepNext, config }: StepProps) => {
                                   >
                                     {repo.full_name}
                                   </Td>
+
                                   <Td
                                     fontSize="sm"
                                     color="gray.500"
-                                    minWidth="10rem"
+                                    width="10rem"
+                                    textAlign="center"
                                   >
-                                    {isActive ? (
-                                      <Badge
-                                        variant="outline"
-                                        colorScheme="green"
-                                      >
-                                        Active
-                                      </Badge>
-                                    ) : (
-                                      dayjs(repo.pushedAt).format("YYYY-MM-DD")
-                                    )}
+                                    <Box>
+                                      {isActive ? (
+                                        <Badge
+                                          variant="outline"
+                                          colorScheme="green"
+                                        >
+                                          Active
+                                        </Badge>
+                                      ) : (
+                                        <Badge
+                                          variant="outline"
+                                          colorScheme="gray"
+                                        >
+                                          Inactive
+                                        </Badge>
+                                      )}
+                                    </Box>
+
+                                    <Box fontSize="xs">
+                                      {dayjs(repo.pushedAt).format(
+                                        "YYYY-MM-DD"
+                                      )}
+                                    </Box>
                                   </Td>
+
                                   <Td
-                                    fontSize="sm"
+                                    fontSize="xs"
                                     color="gray.500"
-                                    minWidth="10rem"
+                                    width="10rem"
+                                    textAlign="center"
                                   >
                                     {dayjs(repo.createdAt).format("YYYY-MM-DD")}
                                   </Td>
@@ -119,7 +215,7 @@ export const RepositoryStep = ({ onStepNext, config }: StepProps) => {
                       </TableContainer>
                     </AccordionPanel>
                   </AccordionItem>
-                </>
+                </React.Fragment>
               )
             })}
         </Accordion>
@@ -128,17 +224,28 @@ export const RepositoryStep = ({ onStepNext, config }: StepProps) => {
           <Button variant="ghost" onClick={() => previousStep()}>
             Back
           </Button>
+
           <Spacer />
-          <Button
-            colorScheme="blue"
-            onClick={() => {
-              onStepNext({ repositories: data && data[0] })
-              nextStep()
-            }}
-            isLoading={isLoading}
-          >
-            Next
-          </Button>
+
+          <Stack direction="row" align="center">
+            {selectedRepos.length > 0 && (
+              <Box fontSize="sm" color="gray.500">
+                {selectedRepos?.length} repos selected
+              </Box>
+            )}
+
+            <Button
+              colorScheme="blue"
+              onClick={() => {
+                onStepNext({ repositories: selectedRepos })
+                nextStep()
+              }}
+              isDisabled={Object.keys(checkedRepos).length === 0}
+              isLoading={isLoading}
+            >
+              Next
+            </Button>
+          </Stack>
         </Stack>
       </Stack>
     </>
