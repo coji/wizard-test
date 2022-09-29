@@ -22,11 +22,15 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools"
 declare global {
   var env: {
     GITHUB_AUTH_TOKEN: string
+    NODE_ENV: string
   }
 }
 
 export const loader = (args: LoaderArgs) => {
-  return json({ GITHUB_AUTH_TOKEN: process.env.GITHUB_AUTH_TOKEN })
+  return json({
+    GITHUB_AUTH_TOKEN: process.env.GITHUB_AUTH_TOKEN,
+    NODE_ENV: process.env.NODE_ENV,
+  })
 }
 
 export const meta: MetaFunction = () => ({

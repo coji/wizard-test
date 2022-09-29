@@ -1,10 +1,8 @@
 import { rest } from "msw"
+import fixture from "../fixture.json"
 
 export const handlers = [
-  rest.post("/login", (req, res, ctx) => {
-    return res(ctx.status(200))
-  }),
-  rest.get("/user", (req, res, ctx) => {
-    return res(ctx.status(200))
+  rest.get("https://api.github.com/user/repos", (req, res, ctx) => {
+    return res(ctx.status(200), ctx.json(fixture))
   }),
 ]
