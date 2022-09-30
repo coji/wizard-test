@@ -17,6 +17,7 @@ import {
   Td,
   Checkbox,
   Badge,
+  chakra,
 } from "@chakra-ui/react"
 import React, { useState, useCallback, useEffect } from "react"
 import { useWizard } from "react-use-wizard"
@@ -98,7 +99,11 @@ export const RepositoryStep = ({ onStepNext, config }: StepProps) => {
                           <Checkbox
                             isChecked={isOrgChecked}
                             isIndeterminate={isOrgIndeterminate}
+                            onClick={(e) => {
+                              e.stopPropagation() // acordion 開閉させない
+                            }}
                             onChange={(e) => {
+                              console.log("changed")
                               handleClickOrgCheckbox(org, isOrgChecked)
                             }}
                           ></Checkbox>
@@ -142,7 +147,6 @@ export const RepositoryStep = ({ onStepNext, config }: StepProps) => {
                                   }}
                                   onClick={(e) => {
                                     handleClickRepoCheckbox(repo.id)
-                                    e.preventDefault()
                                   }}
                                 >
                                   <Td
@@ -151,9 +155,21 @@ export const RepositoryStep = ({ onStepNext, config }: StepProps) => {
                                     whiteSpace="break-spaces"
                                   >
                                     <Stack direction="row">
-                                      <Checkbox
-                                        isChecked={checkedRepos[repo.id]}
-                                      ></Checkbox>
+                                      {/* Checkbox はアニメーションするためまとめて変更するとめっちゃ遅いので数が多いこれは input に */}
+                                      <chakra.input
+                                        type="checkbox"
+                                        checked={checkedRepos[repo.id]}
+                                        onClick={(e) => {
+                                          // テーブル行クリックを発動させない
+                                          e.stopPropagation()
+                                        }}
+                                        onChange={(e) =>
+                                          handleClickRepoCheckbox(repo.id)
+                                        }
+                                        sx={{
+                                          "accent-color": "#3182ce",
+                                        }}
+                                      />
                                       <Box>{repo.name}</Box>
                                     </Stack>
                                   </Td>
