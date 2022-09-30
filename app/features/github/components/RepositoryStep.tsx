@@ -103,7 +103,6 @@ export const RepositoryStep = ({ onStepNext, config }: StepProps) => {
                               e.stopPropagation() // acordion 開閉させない
                             }}
                             onChange={(e) => {
-                              console.log("changed")
                               handleClickOrgCheckbox(org, isOrgChecked)
                             }}
                           ></Checkbox>
@@ -146,7 +145,7 @@ export const RepositoryStep = ({ onStepNext, config }: StepProps) => {
                                     cursor: "pointer",
                                   }}
                                   onClick={(e) => {
-                                    handleClickRepoCheckbox(repo.id)
+                                    handleClickRepoCheckbox(repo.id) // 行クリックでも発動
                                   }}
                                 >
                                   <Td
@@ -160,8 +159,7 @@ export const RepositoryStep = ({ onStepNext, config }: StepProps) => {
                                         type="checkbox"
                                         checked={checkedRepos[repo.id]}
                                         onClick={(e) => {
-                                          // テーブル行クリックを発動させない
-                                          e.stopPropagation()
+                                          e.stopPropagation() // テーブル行クリックを発動させない
                                         }}
                                         onChange={(e) =>
                                           handleClickRepoCheckbox(repo.id)
