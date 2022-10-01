@@ -47,12 +47,13 @@ export const OrgRepositoryList = ({
               <Tr
                 key={repo.id}
                 _hover={{
-                  bgColor: "gray.50",
-                  cursor: "pointer",
+                  bgColor: isActive ? "gray.50" : "gray.100",
+                  cursor: isActive ? "pointer" : "initial",
                 }}
                 onClick={(e) => {
-                  onCheck(repo.id) // 行クリックでも発動
+                  if (isActive) onCheck(repo.id) // 行クリックでも発動
                 }}
+                bgColor={isActive ? "initial" : "gray.100"}
               >
                 <Td
                   width="16rem"
@@ -64,11 +65,14 @@ export const OrgRepositoryList = ({
                     <chakra.input
                       name="repos[]"
                       type="checkbox"
+                      disabled={!isActive}
                       checked={checkedRepos[repo.id] ?? false}
                       onClick={(e) => {
                         e.stopPropagation() // テーブル行クリックを発動させない
                       }}
-                      onChange={() => onCheck(repo.id)}
+                      onChange={() => {
+                        onCheck(repo.id)
+                      }}
                       sx={{
                         accentColor: "#3182ce",
                       }}

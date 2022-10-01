@@ -11,6 +11,7 @@ import { uniq } from "remeda"
 import type { GitRepo, CheckedRepositories } from "../../interfaces/model"
 import { OrgListItem } from "./OrgListItem"
 import { OrgRepositoryList } from "./OrgRepositoryList"
+import dayjs from "dayjs"
 
 interface RepositoryListProps {
   allRepos: GitRepo[]
@@ -30,7 +31,12 @@ export const RepositoryList = ({ allRepos, onChange }: RepositoryListProps) => {
   // organization をチェック・クリアされたらまとめてレポジトリもチェック・クリア
   const handleClickOrgCheckbox = useCallback(
     (org: string, isPrevChecked: boolean) => {
-      const orgRepos = allRepos.filter((repo) => repo.owner === org) || []
+      const orgRepos =
+        allRepos.filter(
+          (repo) =>
+            repo.owner === org &&
+            dayjs(repo.pushedAt) > dayjs().add(-90, "days")
+        ) || []
       const newCheckedRepos = { ...checkedRepos }
       for (const repo of orgRepos) {
         if (isPrevChecked) {
